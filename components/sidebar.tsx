@@ -52,7 +52,7 @@ export function Sidebar({
           {!isCollapsed && (
             <div className="flex flex-col">
               <span className="text-base font-semibold text-foreground">Gestión de Stock</span>
-              <span className="text-xs text-muted-foreground">Gestión de Inventario</span>
+              <span className="text-xs text-muted-foreground">Control de inventario</span>
             </div>
           )}
         </div>

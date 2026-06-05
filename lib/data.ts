@@ -126,6 +126,71 @@ export const profitByPeriod = {
   anual: 785320,
 }
 
+// KPIs by global filter period
+export const kpisByPeriod = {
+  hoy: { ventas: 12450, compras: 8200, ganancia: 4250 },
+  semana: { ventas: 76300, compras: 52100, ganancia: 24200 },
+  mes: { ventas: 265300, compras: 197400, ganancia: 67900 },
+  año: { ventas: 2856000, compras: 2070680, ganancia: 785320 },
+}
+
+// Sales vs Purchases trend data by period
+export const salesVsPurchasesTrend = {
+  hoy: [
+    { name: '8:00', ventas: 1200, compras: 800 },
+    { name: '10:00', ventas: 2100, compras: 1500 },
+    { name: '12:00', ventas: 3400, compras: 2200 },
+    { name: '14:00', ventas: 2800, compras: 1800 },
+    { name: '16:00', ventas: 1950, compras: 1200 },
+    { name: '18:00', ventas: 1000, compras: 700 },
+  ],
+  semana: [
+    { name: 'Lun', ventas: 8500, compras: 6200 },
+    { name: 'Mar', ventas: 12400, compras: 8100 },
+    { name: 'Mié', ventas: 7600, compras: 5400 },
+    { name: 'Jue', ventas: 14200, compras: 9800 },
+    { name: 'Vie', ventas: 17800, compras: 12500 },
+    { name: 'Sáb', ventas: 11200, compras: 7200 },
+    { name: 'Dom', ventas: 4600, compras: 2900 },
+  ],
+  mes: [
+    { name: 'Sem 1', ventas: 45600, compras: 32400 },
+    { name: 'Sem 2', ventas: 52300, compras: 38900 },
+    { name: 'Sem 3', ventas: 68400, compras: 51200 },
+    { name: 'Sem 4', ventas: 99000, compras: 74900 },
+  ],
+  año: [
+    { name: 'Ene', ventas: 186500, compras: 142000 },
+    { name: 'Feb', ventas: 195200, compras: 148500 },
+    { name: 'Mar', ventas: 223800, compras: 168200 },
+    { name: 'Abr', ventas: 245600, compras: 182400 },
+    { name: 'May', ventas: 265300, compras: 197400 },
+    { name: 'Jun', ventas: 278900, compras: 205800 },
+    { name: 'Jul', ventas: 256400, compras: 188900 },
+    { name: 'Ago', ventas: 234500, compras: 172300 },
+    { name: 'Sep', ventas: 252100, compras: 185600 },
+    { name: 'Oct', ventas: 268700, compras: 198400 },
+    { name: 'Nov', ventas: 289500, compras: 214200 },
+    { name: 'Dic', ventas: 359500, compras: 266980 },
+  ],
+}
+
+// Top products for donut chart (by sales and purchases)
+// High contrast palette: Rojo Intenso, Gris Carbón, Gris Plata, Neutro Suave
+export const topProductsSales = [
+  { name: 'Ibuprofeno 400mg', value: 42500, fill: '#DC2626' },
+  { name: 'Paracetamol 500mg', value: 38200, fill: '#374151' },
+  { name: 'Diclofenac 50mg', value: 28900, fill: '#9CA3AF' },
+  { name: 'Gasas estériles', value: 24300, fill: '#D1D5DB' },
+]
+
+export const topProductsPurchases = [
+  { name: 'Ibuprofeno 400mg', value: 45000, fill: '#DC2626' },
+  { name: 'Paracetamol 500mg', value: 38000, fill: '#374151' },
+  { name: 'Gasas estériles', value: 32000, fill: '#9CA3AF' },
+  { name: 'Jeringas 5ml', value: 28000, fill: '#D1D5DB' },
+]
+
 // Movement (transaction) data for sales and purchases
 export interface Movement {
   id: string

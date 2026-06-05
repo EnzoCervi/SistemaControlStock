@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react'
-import { Search, Plus, Filter, FileText, Upload, Check } from 'lucide-react'
+import { Search, Plus, Filter, FileText, Upload, Check, Pencil, Trash2 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -50,6 +50,21 @@ export function ProductCatalog({ products, onAddProduct }: ProductCatalogProps) 
   const [isLoading, setIsLoading] = useState(false)
   const [loadingProgress, setLoadingProgress] = useState(0)
   const [showSuccess, setShowSuccess] = useState(false)
+  
+  // Edit modal state
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null)
+  const [editFormData, setEditFormData] = useState({
+    name: '',
+    presentation: '',
+    category: 'Analgésicos' as Product['category'],
+    minStock: 0,
+  })
+  
+  // Delete confirmation modal state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [productToDelete, setProductToDelete] = useState<Product | null>(null)
+  
   const [newProduct, setNewProduct] = useState({
     name: '',
     drug: '',
@@ -141,6 +156,44 @@ export function ProductCatalog({ products, onAddProduct }: ProductCatalogProps) 
     if (stock < minStock) return 'destructive'
     if (stock < minStock * 1.5) return 'secondary'
     return 'default'
+  }
+
+  // Open edit modal with product data
+  const handleOpenEditModal = (product: Product) => {
+    setEditingProduct(product)
+    setEditFormData({
+      name: product.name,
+      presentation: product.presentation,
+      category: product.category,
+      minStock: product.minStock,
+    })
+    setIsEditModalOpen(true)
+  }
+
+  // Save edited product
+  const handleSaveEdit = () => {
+    if (editingProduct) {
+      // Here you would typically call an API to update the product
+      console.log('Saving product:', { ...editingProduct, ...editFormData })
+      setIsEditModalOpen(false)
+      setEditingProduct(null)
+    }
+  }
+
+  // Open delete confirmation modal
+  const handleOpenDeleteModal = (product: Product) => {
+    setProductToDelete(product)
+    setIsDeleteModalOpen(true)
+  }
+
+  // Confirm product deletion (logical delete)
+  const handleConfirmDelete = () => {
+    if (productToDelete) {
+      // Here you would typically call an API to mark the product as inactive
+      console.log('Deleting product:', productToDelete.id)
+      setIsDeleteModalOpen(false)
+      setProductToDelete(null)
+    }
   }
 
   return (
@@ -428,19 +481,18 @@ export function ProductCatalog({ products, onAddProduct }: ProductCatalogProps) 
             <TableHeader>
               <TableRow className="hover:bg-transparent">
                 <TableHead className="font-medium">Producto</TableHead>
-                <TableHead className="font-medium">Droga/Componente</TableHead>
                 <TableHead className="font-medium">Presentación</TableHead>
                 <TableHead className="font-medium">Categoría</TableHead>
                 <TableHead className="text-right font-medium">Precio</TableHead>
                 <TableHead className="text-right font-medium">Stock Actual</TableHead>
                 <TableHead className="text-right font-medium">Stock Mín.</TableHead>
+                <TableHead className="text-center font-medium">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredProducts.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell className="font-medium">{product.name}</TableCell>
-                  <TableCell className="text-muted-foreground">{product.drug}</TableCell>
                   <TableCell className="text-muted-foreground">{product.presentation}</TableCell>
                   <TableCell>
                     <Badge variant="secondary" className="font-normal">
@@ -458,6 +510,24 @@ export function ProductCatalog({ products, onAddProduct }: ProductCatalogProps) 
                   <TableCell className="text-right text-muted-foreground">
                     {product.minStock}
                   </TableCell>
+                  <TableCell className="text-center">
+                    <div className="flex items-center justify-center gap-2">
+                      <button
+                        onClick={() => handleOpenEditModal(product)}
+                        className="p-1.5 rounded-md text-gray-600 hover:text-red-600 hover:bg-red-50 transition-colors"
+                        title="Editar producto"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => handleOpenDeleteModal(product)}
+                        className="p-1.5 rounded-md text-gray-600 hover:text-destructive hover:bg-destructive/10 transition-colors"
+                        title="Dar de baja"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </TableCell>
                 </TableRow>
               ))}
               {filteredProducts.length === 0 && (
@@ -471,6 +541,106 @@ export function ProductCatalog({ products, onAddProduct }: ProductCatalogProps) 
           </Table>
         </CardContent>
       </Card>
+
+      {/* Edit Product Modal */}
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Editar Producto</DialogTitle>
+            <DialogDescription>
+              Modifique los datos del producto seleccionado.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="edit-name">Nombre del Producto</Label>
+              <Input
+                id="edit-name"
+                value={editFormData.name}
+                onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                placeholder="Ej: Ibuprofeno 400mg"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="edit-presentation">Presentación</Label>
+              <Input
+                id="edit-presentation"
+                value={editFormData.presentation}
+                onChange={(e) => setEditFormData({ ...editFormData, presentation: e.target.value })}
+                placeholder="Ej: Caja x 20 comp."
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="edit-category">Categoría</Label>
+                <Select
+                  value={editFormData.category}
+                  onValueChange={(value) => setEditFormData({ ...editFormData, category: value as Product['category'] })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat} value={cat}>
+                        {cat}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="edit-minStock">Stock Mínimo</Label>
+                <Input
+                  id="edit-minStock"
+                  type="number"
+                  min="0"
+                  value={editFormData.minStock}
+                  onChange={(e) => setEditFormData({ ...editFormData, minStock: parseInt(e.target.value) || 0 })}
+                />
+              </div>
+            </div>
+          </div>
+          <DialogFooter className="gap-3">
+            <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSaveEdit} className="bg-red-600 hover:bg-red-700">
+              Guardar Cambios
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Modal */}
+      <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>Confirmar Baja</DialogTitle>
+            <DialogDescription>
+              ¿Estás seguro de que deseas dar de baja este producto? No se mostrará en el catálogo activo.
+            </DialogDescription>
+          </DialogHeader>
+          {productToDelete && (
+            <div className="py-4">
+              <p className="text-sm text-muted-foreground">
+                Producto: <span className="font-medium text-foreground">{productToDelete.name}</span>
+              </p>
+            </div>
+          )}
+          <DialogFooter className="gap-3">
+            <Button variant="outline" onClick={() => setIsDeleteModalOpen(false)}>
+              Volver
+            </Button>
+            <Button 
+              onClick={handleConfirmDelete} 
+              variant="destructive"
+            >
+              Confirmar Baja
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
