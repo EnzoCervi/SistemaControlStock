@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg fill="none" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg">
+  <g opacity="0" visibility="hidden" id="Element 1">
+    <animate begin="0.25s" calcMode="discrete" fill="freeze" dur="1s" values="visible; visible" keyTimes="0; 1" attributeName="visibility" />
+    <animate attributeName="opacity" dur="0.75345s" begin="0.179883s" calcMode="spline" values="0; 1; 1; 0" keyTimes="0; 0.046; 0.368; 1" keySplines="0 0 1 1; 0 0 1 1; 0 0 1 1" fill="freeze" />
+    <g transform="translate(960,960)">
+      <animateTransform type="translate" attributeName="transform" dur="0.494s" begin="0.267s" calcMode="spline" values="960 960; 1027.199 504.507" keyTimes="0; 1" keySplines="0.252 0 0.33 1" fill="freeze" />
+      <g transform="scale(1,1) translate(-30.771,-30.771)">
+        <g id="Group 1" transform="matrix(1,0,0,1,30.771,30.772)">
+          <path fill="#41af80" fill-opacity="1" d="M30.522,-0.001C30.522,16.856,16.856,30.522,0,30.522C-16.857,30.522,-30.522,16.856,-30.522,-0.001C-30.522,-16.857,-16.857,-30.522,0,-30.522C16.856,-30.522,30.522,-16.857,30.522,-0.001Z" />
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <g opacity="0" visibility="hidden" id="Element 2">
+    <animate begin="0.25s" calcMode="discrete" fill="freeze" dur="1s" values="visible; visible" keyTimes="0; 1" attributeName="visibility" />
+    <animate attributeName="opacity" dur="0.75345s" begin="0.179883s" calcMode="spline" values="0; 1; 1; 0" keyTimes="0; 0.046; 0.368; 1" keySplines="0.167 0 0.833 1; 0.167 0 0.833 1; 0.72 0 0.833 0.601" fill="freeze" />
+    <g transform="translate(960,960)">
+      <animateTransform type="translate" attributeName="transform" dur="0.528s" begin="0.267s" calcMode="spline" values="960 960; 788.638 547.457" keyTimes="0; 1" keySplines="0.292 0 0.33 1" fill="freeze" />
+      <g transform="scale(1,1) translate(-33.515,-41.664)">
+        <g id="Group 1" transform="matrix(1,0,0,1,33.515,41.664)">
+          <path fill="#4683f5" fill-opacity="1" d="M28.859,29.054L10.733,39.519C7.451,41.414,3.255,40.289,1.36,37.008L-31.37,-19.683C-33.265,-22.964,-32.14,-27.16,-28.859,-29.054L-10.732,-39.52C-7.451,-41.414,-3.255,-40.29,-1.36,-37.009L31.37,19.682C33.265,22.964,32.14,27.159,28.859,29.054Z" />
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <g opacity="0" visibility="hidden" id="Element 3">
+    <animate begin="0.25s" calcMode="discrete" fill="freeze" dur="1s" values="visible; visible" keyTimes="0; 1" attributeName="visibility" />
+    <animate attributeName="opacity" dur="0.75345s" begin="0.179883s" calcMode="spline" values="0; 1; 1; 0" keyTimes="0; 0.046; 0.368; 1" keySplines="0.167 0 0.833 1; 0.167 0 0.833 1; 0.72 0 0.833 0.601" fill="freeze" />
+    <g transform="translate(959.693,959.692)">
+      <animateTransform type="translate" attributeName="transform" dur="0.442s" begin="0.267s" calcMode="spline" values="959.693 959.692; 529.471 736.071" keyTimes="0; 1" keySplines="0.174 0 0.33 1" fill="freeze" />
+      <g transform="scale(1,1) translate(-47.326,-47.325)">
+        <g id="Group 1" transform="matrix(1,0,0,1,47.325,47.325)">
+          <path fill="#4683f5" fill-opacity="1" d="M-17.558,-36.37L-13.481,-34.987C-8.858,-33.419,-3.759,-34.227,0.154,-37.147L3.605,-39.722C13.458,-47.075,27.467,-39.938,27.31,-27.644L27.255,-23.339C27.192,-18.457,29.535,-13.857,33.521,-11.038L37.037,-8.552C47.075,-1.453,44.615,14.074,32.875,17.724L28.763,19.002C24.101,20.451,20.452,24.102,19.003,28.764L17.724,32.876C14.075,44.616,-1.453,47.075,-8.552,37.037L-11.039,33.522C-13.858,29.536,-18.458,27.192,-23.339,27.255L-27.645,27.309C-39.938,27.466,-47.075,13.459,-39.722,3.605L-37.146,0.154C-34.226,-3.758,-33.419,-8.857,-34.987,-13.481L-36.37,-17.558C-40.318,-29.202,-29.202,-40.318,-17.558,-36.37Z" />
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <g opacity="0" visibility="hidden" id="Element 4">
+    <animate begin="0.25s" calcMode="discrete" fill="freeze" dur="1s" values="visible; visible" keyTimes="0; 1" attributeName="visibility" />
+    <animate attributeName="opacity" dur="0.75345s" begin="0.179883s" calcMode="spline" values="0; 1; 1; 0" keyTimes="0; 0.046; 0.368; 1" keySplines="0.167 0 0.833 1; 0.167 0 0.833 1; 0.72 0 0.833 0.601" fill="freeze" />
+    <g transform="translate(960,960)">
+      <animateTransform type="translate" attributeName="transform" dur="0.511s" begin="0.267s" calcMode="spline" values="960 960; 446.624 934.727" keyTimes="0; 1" keySplines="0.273 0 0.33 1" fill="freeze" />
+      <g transform="scale(1,1) translate(-42,-25.144)">
+        <g id="Group 1" transform="matrix(1,0,0,1,42,25.144)">
+          <path fill="#50d05c" fill-opacity="1" d="M36.343,-18.872L40.921,1.552C41.75,5.249,39.425,8.919,35.727,9.747L-28.148,24.066C-31.845,24.066,-35.514,22.569,-36.344,18.872L-40.922,-1.553C-41.75,-5.25,-39.425,-8.919,-35.728,-9.747L28.148,-24.066C31.845,-24.894,35.514,-22.569,36.343,-18.872Z" />
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <g opacity="0" visibility="hidden" id="Element 5">
+    <animate begin="0.25s" calcMode="discrete" fill="freeze" dur="1s" values="visible; visible" keyTimes="0; 1" attributeName="visibility" />
+    <animate attributeName="opacity" dur="0.75345s" begin="0.179883s" calcMode="spline" values="0; 1; 1; 0" keyTimes="0; 0.046; 0.368; 1" keySplines="0.167 0 0.833 1; 0.167 0 0.833 1; 0.72 0 0.833 0.601" fill="freeze" />
+    <g transform="translate(960,960)">
+      <animateTransform type="translate" attributeName="transform" dur="0.52s" begin="0.267s" calcMode="spline" values="960 960; 517.297 1177.159" keyTimes="0; 1" keySplines="0.283 0 0.33 1" fill="freeze" />
+      <g transform="scale(1,1) translate(-30.771,-30.771)">
+        <g id="Group 1" transform="matrix(1,0,0,1,30.771,30.771)">
+          <path fill="#f82681" fill-opacity="1" d="M30.521,0C30.521,16.856,16.856,30.521,0,30.521C-16.857,30.521,-30.521,16.856,-30.521,0C-30.521,-16.856,-16.857,-30.521,0,-30.521C16.856,-30.521,30.521,-16.856,30.521,0Z" />
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <g opacity="0" visibility="hidden" id="Element 6">
+    <animate begin="0.25s" calcMode="discrete" fill="freeze" dur="1s" values="visible; visible" keyTimes="0; 1" attributeName="visibility" />
+    <animate attributeName="opacity" dur="0.75345s" begin="0.179883s" calcMode="spline" values="0; 1; 1; 0" keyTimes="0; 0.046; 0.368; 1" keySplines="0.167 0 0.833 1; 0.167 0 0.833 1; 0.72 0 0.833 0.601" fill="freeze" />
+    <g transform="translate(959.693,959.693)">
+      <animateTransform type="translate" attributeName="transform" dur="0.286s" begin="0.267s" calcMode="spline" values="959.693 959.693; 529.471 1363.811" keyTimes="0; 1" keySplines="0.189 0 0.33 1" fill="freeze" />
+      <g transform="scale(1,1) translate(-47.326,-47.325)">
+        <g id="Group 1" transform="matrix(1,0,0,1,47.325,47.325)">
+          <path fill="#ffbc32" fill-opacity="1" d="M-17.558,-36.37L-13.481,-34.987C-8.858,-33.42,-3.759,-34.227,0.154,-37.147L3.605,-39.723C13.458,-47.075,27.467,-39.938,27.31,-27.644L27.255,-23.339C27.192,-18.457,29.535,-13.857,33.521,-11.038L37.037,-8.553C47.075,-1.453,44.615,14.074,32.875,17.724L28.763,19.002C24.101,20.451,20.452,24.102,19.003,28.764L17.724,32.875C14.075,44.616,-1.453,47.075,-8.552,37.037L-11.039,33.522C-13.858,29.535,-18.458,27.192,-23.339,27.254L-27.644,27.31C-39.938,27.467,-47.075,13.459,-39.722,3.606L-37.146,0.154C-34.226,-3.759,-33.419,-8.857,-34.987,-13.481L-36.37,-17.558C-40.318,-29.202,-29.202,-40.318,-17.558,-36.37Z" />
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <g opacity="0" visibility="hidden" id="Element 7">
+    <animate begin="0.25s" calcMode="discrete" fill="freeze" dur="1s" values="visible; visible" keyTimes="0; 1" attributeName="visibility" />
+    <animate attributeName="opacity" dur="0.75345s" begin="0.179883s" calcMode="spline" values="0; 1; 1; 0" keyTimes="0; 0.046; 0.368; 1" keySplines="0.167 0 0.833 1; 0.167 0 0.833 1; 0.72 0 0.833 0.601" fill="freeze" />
+    <g transform="translate(958.09,958.244)">
+      <animateTransform type="translate" attributeName="transform" dur="0.312s" begin="0.267s" calcMode="spline" values="958.09 958.244; 1316.148 645.839" keyTimes="0; 1" keySplines="0.229 0 0.33 1" fill="freeze" />
+      <g transform="scale(1,1) translate(-77.856,-74.774)">
+        <g id="Group 1" transform="matrix(1,0,0,1,77.856,74.774)">
+          <path stroke-linejoin="round" stroke-linecap="round" stroke-width="20" stroke-opacity="1" stroke="#f82681" d="M-18.607,24.774C-27.856,12.719,-24.993,-5.238,-12.262,-15.006C0.468,-24.774,18.556,-22.893,27.805,-10.838C27.823,-10.815,27.839,-10.792,27.857,-10.77" />
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <g opacity="0" visibility="hidden" id="Element 8">
+    <animate begin="0.25s" calcMode="discrete" fill="freeze" dur="1s" values="visible; visible" keyTimes="0; 1" attributeName="visibility" />
+    <animate attributeName="opacity" dur="0.75345s" begin="0.179883s" calcMode="spline" values="0; 1; 1; 0" keyTimes="0; 0.046; 0.368; 1" keySplines="0.167 0 0.833 1; 0.167 0 0.833 1; 0.72 0 0.833 0.601" fill="freeze" />
+    <g transform="translate(959.692,959.692)">
+      <animateTransform type="translate" attributeName="transform" dur="0.502s" begin="0.267s" calcMode="spline" values="959.692 959.692; 1397.413 873.271" keyTimes="0; 1" keySplines="0.263 0 0.33 1" fill="freeze" />
+      <g transform="scale(1,1) translate(-47.326,-47.325)">
+        <g id="Group 1" transform="matrix(1,0,0,1,47.325,47.325)">
+          <path fill="#ffbc32" fill-opacity="1" d="M-17.558,-36.37L-13.481,-34.987C-8.858,-33.419,-3.758,-34.227,0.154,-37.147L3.606,-39.722C13.46,-47.075,27.467,-39.938,27.31,-27.644L27.255,-23.339C27.193,-18.457,29.537,-13.857,33.522,-11.038L37.038,-8.552C47.076,-1.453,44.617,14.074,32.877,17.724L28.763,19.002C24.101,20.451,20.452,24.102,19.003,28.764L17.724,32.876C14.075,44.616,-1.453,47.075,-8.551,37.037L-11.037,33.522C-13.857,29.536,-18.456,27.192,-23.338,27.255L-27.644,27.31C-39.937,27.466,-47.075,13.459,-39.721,3.606L-37.146,0.155C-34.226,-3.758,-33.418,-8.857,-34.987,-13.481L-36.37,-17.558C-40.318,-29.202,-29.202,-40.318,-17.558,-36.37Z" />
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <g opacity="0" visibility="hidden" id="Element 9">
+    <animate begin="0.25s" calcMode="discrete" fill="freeze" dur="1s" values="visible; visible" keyTimes="0; 1" attributeName="visibility" />
+    <animate attributeName="opacity" dur="0.75345s" begin="0.179883s" calcMode="spline" values="0; 1; 1; 0" keyTimes="0; 0.046; 0.368; 1" keySplines="0.167 0 0.833 1; 0.167 0 0.833 1; 0.72 0 0.833 0.601" fill="freeze" />
+    <g transform="translate(961.262,961.213)">
+      <animateTransform type="translate" attributeName="transform" dur="0.286s" begin="0.267s" calcMode="spline" values="961.262 961.213; 1420.768 1239.936" keyTimes="0; 1" keySplines="0.189 0 0.33 1" fill="freeze" />
+      <g transform="scale(1,1) translate(-60.548,-78.82)">
+        <g id="Group 1" transform="matrix(1,0,0,1,60.548,78.82)">
+          <path stroke-linejoin="round" stroke-linecap="round" stroke-width="15" stroke-opacity="1" stroke="#f82681" d="M-12.409,-41.32C8.345,-38.587,23.048,-18.302,20.162,3.615C17.276,25.533,-2.177,41.32,-22.93,38.586C-22.97,38.581,-23.009,38.576,-23.048,38.571" />
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <g opacity="0" visibility="hidden" id="Element 10">
+    <animate begin="0.25s" calcMode="discrete" fill="freeze" dur="1s" values="visible; visible" keyTimes="0; 1" attributeName="visibility" />
+    <animate attributeName="opacity" dur="0.75345s" begin="0.179883s" calcMode="spline" values="0; 1; 1; 0" keyTimes="0; 0.046; 0.368; 1" keySplines="0.167 0 0.833 1; 0.167 0 0.833 1; 0.72 0 0.833 0.601" fill="freeze" />
+    <g transform="translate(960,960)">
+      <animateTransform type="translate" attributeName="transform" dur="0.312s" begin="0.267s" calcMode="spline" values="960 960; 1314.113 1427.051" keyTimes="0; 1" keySplines="0.229 0 0.33 1" fill="freeze" />
+      <g transform="scale(1,1) translate(-33.514,-41.664)">
+        <g id="Group 1" transform="matrix(1,0,0,1,33.514,41.664)">
+          <path fill="#4683f5" fill-opacity="1" d="M28.859,29.055L10.732,39.52C7.451,41.414,3.255,40.29,1.361,37.009L-31.37,-19.681C-33.264,-22.964,-32.14,-27.159,-28.859,-29.053L-10.732,-39.519C-7.451,-41.414,-3.255,-40.29,-1.361,-37.008L31.37,19.683C33.264,22.964,32.14,27.16,28.859,29.055Z" />
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <g opacity="0" visibility="hidden" id="Element 11">
+    <animate begin="0.25s" calcMode="discrete" fill="freeze" dur="1s" values="visible; visible" keyTimes="0; 1" attributeName="visibility" />
+    <animate attributeName="opacity" dur="0.75345s" begin="0.179883s" calcMode="spline" values="0; 1; 1; 0" keyTimes="0; 0.046; 0.368; 1" keySplines="0.167 0 0.833 1; 0.167 0 0.833 1; 0.72 0 0.833 0.601" fill="freeze" />
+    <g transform="translate(957.368,957.581)">
+      <animateTransform type="translate" attributeName="transform" dur="0.277s" begin="0.267s" calcMode="spline" values="957.368 957.581; 774.545 1455.048" keyTimes="0; 1" keySplines="0.174 0 0.33 1" fill="freeze" />
+      <g transform="scale(1,1) translate(-88.379,-84.132)">
+        <g id="Group 1" transform="matrix(1,0,0,1,88.378,84.131)">
+          <path stroke-linejoin="round" stroke-linecap="round" stroke-width="20" stroke-opacity="1" stroke="#41af80" d="M-25.635,34.132C-38.378,17.524,-34.433,-7.216,-16.894,-20.673C0.645,-34.131,25.563,-31.538,38.306,-14.931L38.379,-14.837" />
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <g transform="translate(960,960)">
+    <g transform="scale(0.2,0.2)">
+      <animateTransform type="scale" attributeName="transform" dur="0.842s" begin="0.326s" calcMode="spline" values="0.2 0.2; 1.1 1.1; 0.95 0.95; 1.02 1.02; 0.98 0.98; 1 1" keyTimes="0; 0.385; 0.625; 0.775; 0.875; 1" keySplines="0.333 0 0.667 1; 0.333 0 0.833 1; 0.167 0 0.833 1; 0.167 0 0.833 1; 0.167 0 0.833 1" fill="freeze" />
+      <g transform="translate(-346.917,-346.917)">
+        <g id="Group 1" transform="matrix(1,0,0,1,346.916,346.917)">
+          <path fill="#50d05c" fill-opacity="1" d="M346.667,0C346.667,191.458,191.459,346.667,0,346.667C-191.458,346.667,-346.667,191.458,-346.667,0C-346.667,-191.459,-191.458,-346.666,0,-346.666C191.459,-346.666,346.667,-191.459,346.667,0Z" />
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <g transform="translate(960,960)">
+    <g transform="scale(0.2,0.2)">
+      <animateTransform type="scale" attributeName="transform" dur="0.842s" begin="0.326s" calcMode="spline" values="0.2 0.2; 1.1 1.1; 0.95 0.95; 1.02 1.02; 0.98 0.98; 1 1" keyTimes="0; 0.385; 0.625; 0.775; 0.875; 1" keySplines="0.333 0 0.667 1; 0.333 0 0.833 1; 0.167 0 0.833 1; 0.167 0 0.833 1; 0.167 0 0.833 1" fill="freeze" />
+      <g transform="translate(-346.917,-346.917)">
+        <g id="Tick">
+          <g transform="translate(346.916,346.917)">
+            <g transform="rotate(-165)">
+              <animateTransform type="rotate" attributeName="transform" dur="0.45s" begin="0.2s" calcMode="spline" values="-165; 0" keyTimes="0; 1" keySplines="0.333 0 0.667 1" fill="freeze" />
+              <g transform="scale(0.2,0.2)">
+                <animateTransform type="scale" attributeName="transform" dur="0.316s" begin="0.326s" calcMode="spline" values="0.2 0.2; 1 1" keyTimes="0; 1" keySplines="0.333 0 0.667 1" fill="freeze" />
+                <g transform="translate(-278.033,-227.218)">
+                  <g id="Group 1" transform="matrix(1,0,0,1,278.033,227.218)">
+                    <path stroke-linejoin="round" stroke-linecap="round" stroke-width="55" stroke-opacity="1" stroke="#ffffff" d="M-153.033,0.588L-51.404,102.218L153.032,-102.218" />
+                  </g>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

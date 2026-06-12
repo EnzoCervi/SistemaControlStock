@@ -10,16 +10,24 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import { formatCurrency } from '@/lib/data'
-import type { Product, CartItem } from '@/lib/data'
+
+// 💡 Importamos el molde oficial de la aplicación
+import { type Producto } from '@/app/page'
+
+// Definimos la estructura limpia del carrito basada en nuestro Producto
+export interface CartItem extends Producto {
+  quantity: number
+  precio: number // Placeholder numérico para no romper el formateador de moneda
+}
 
 interface QuickEgressProps {
-  products: Product[]
-  frequentProducts: Product[]
+  products: Producto[]
+  frequentProducts: Producto[]
   cart: CartItem[]
-  onAddToCart: (product: Product) => void
+  onAddToCart: (product: Producto) => void
   onRemoveFromCart: (productId: string) => void
   onUpdateQuantity: (productId: string, quantity: number) => void
-  onConfirmEgress: () => boolean
+  onConfirmEgress: (tituloTicket: string, notaTicket: string) => Promise<boolean> 
 }
 
 export function QuickEgress({
@@ -33,18 +41,20 @@ export function QuickEgress({
 }: QuickEgressProps) {
   const [search, setSearch] = useState('')
   const [showSuccess, setShowSuccess] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false) // Estado de carga para el botón
+  const [ticketTitulo, setTicketTitulo] = useState('')
+  const [ticketNota, setTicketNota] = useState('')
 
+  // Buscador 
   const filteredProducts = useMemo(() => {
     if (!search) return []
-    return products.filter(
-      (p) =>
-        p.name.toLowerCase().includes(search.toLowerCase()) ||
-        p.drug.toLowerCase().includes(search.toLowerCase())
+    return products.filter((p) =>
+      p.nombre.toLowerCase().includes(search.toLowerCase())
     ).slice(0, 5)
   }, [products, search])
 
   const cartTotal = useMemo(() => 
-    cart.reduce((acc, item) => acc + item.price * item.quantity, 0),
+    cart.reduce((acc, item) => acc + item.precio * item.quantity, 0),
     [cart]
   )
 
@@ -53,24 +63,35 @@ export function QuickEgress({
     [cart]
   )
 
-  const handleConfirm = () => {
-    const success = onConfirmEgress()
+  // Manejador asíncrono para la confirmación de la salida
+  const handleConfirm = async () => {
+    // Candado de seguridad básico: si no hay título, no hace nada
+    if (!ticketTitulo.trim()) return
+
+    setIsProcessing(true)
+    
+    // 💡 PASAMOS LOS DOS PARÁMETROS REALES (Esto borra tu línea roja)
+    const success = await onConfirmEgress(ticketTitulo, ticketNota)
+    
+    setIsProcessing(false)
+    
     if (success) {
       setShowSuccess(true)
+      setTicketTitulo('') // Limpiamos el título para la próxima venta
+      setTicketNota('')   // Limpiamos la nota para la próxima venta
       setTimeout(() => setShowSuccess(false), 2000)
     }
   }
 
-  const handleSelectProduct = (product: Product) => {
+  const handleSelectProduct = (product: Producto) => {
     onAddToCart(product)
     setSearch('')
   }
 
   return (
     <div className="flex h-[calc(100vh-7rem)] flex-col gap-6 lg:flex-row">
-      {/* Left Side - Search and Products */}
+      {/* Panel Izquierdo - Buscador y Frecuentes */}
       <div className="flex flex-1 flex-col space-y-6">
-        {/* Header */}
         <div>
           <h1 className="text-2xl font-semibold text-foreground">Venta Rápida</h1>
           <p className="text-sm text-muted-foreground">
@@ -78,20 +99,20 @@ export function QuickEgress({
           </p>
         </div>
 
-        {/* Search Bar */}
+        {/* Barra de Búsqueda */}
         <Card className="border-border">
           <CardContent className="p-4">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Buscar producto por nombre o droga..."
+                placeholder="Buscar producto por nombre..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="h-12 pl-12 text-base"
               />
             </div>
             
-            {/* Search Results Dropdown */}
+            {/* Dropdown de Resultados */}
             {filteredProducts.length > 0 && (
               <div className="mt-2 rounded-lg border border-border bg-card shadow-lg">
                 {filteredProducts.map((product) => (
@@ -101,10 +122,10 @@ export function QuickEgress({
                     className="flex w-full items-center justify-between p-3 text-left transition-colors hover:bg-muted"
                   >
                     <div>
-                      <p className="text-sm font-medium text-foreground">{product.name}</p>
-                      <p className="text-xs text-muted-foreground">{product.presentation}</p>
+                      <p className="text-sm font-medium text-foreground">{product.nombre}</p>
+                      <p className="text-xs text-muted-foreground">{product.presentacion}</p>
                     </div>
-                    <Badge variant="secondary">{product.stock} disp.</Badge>
+                    <Badge variant="secondary">{product.stock_actual} disp.</Badge>
                   </button>
                 ))}
               </div>
@@ -112,7 +133,7 @@ export function QuickEgress({
           </CardContent>
         </Card>
 
-        {/* Frequent Products Grid */}
+        {/* Productos Frecuentes */}
         <Card className="flex-1 border-border">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-medium">Productos Frecuentes</CardTitle>
@@ -125,11 +146,11 @@ export function QuickEgress({
                   <button
                     key={product.id}
                     onClick={() => onAddToCart(product)}
-                    disabled={product.stock === 0}
+                    disabled={product.stock_actual === 0}
                     className={cn(
                       "group relative flex flex-col items-start rounded-lg border p-4 text-left transition-all hover:border-primary hover:shadow-md",
                       inCart ? "border-primary bg-primary/5" : "border-border bg-card",
-                      product.stock === 0 && "cursor-not-allowed opacity-50"
+                      product.stock_actual === 0 && "cursor-not-allowed opacity-50"
                     )}
                   >
                     {inCart && (
@@ -141,10 +162,10 @@ export function QuickEgress({
                       <Package className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
                     </div>
                     <p className="mt-3 text-sm font-medium text-foreground line-clamp-2">
-                      {product.name}
+                      {product.nombre}
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      {product.stock} disponibles
+                      {product.stock_actual} disponibles
                     </p>
                   </button>
                 )
@@ -154,7 +175,7 @@ export function QuickEgress({
         </Card>
       </div>
 
-      {/* Right Side - Cart */}
+      {/* Panel Derecho - Ticket de Venta / Carrito */}
       <Card className="w-full border-border lg:w-96">
         <CardHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between">
@@ -165,8 +186,23 @@ export function QuickEgress({
           </div>
         </CardHeader>
         
-        <div className="flex flex-1 flex-col">
-          {cart.length === 0 ? (
+        <div className="flex flex-1 flex-col justify-center">
+          {showSuccess ? (
+            /* ZONA A: Si la venta fue exitosa, se adueña del panel para mostrar la animación centrada */
+            <div className="flex flex-1 flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in-95 duration-150">
+              <embed 
+                type="image/svg+xml"
+                src="/success.svg" 
+                width="200"
+                height="200"
+                className="h-48 w-48 mb-4 pointer-events-none"
+              />
+              <p className="text-lg font-semibold text-emerald-800">
+                Venta confirmada
+              </p>
+            </div>
+          ) : cart.length === 0 ? (
+            /* ZONA B: Estado de espera estándar cuando no hay productos */
             <div className="flex flex-1 flex-col items-center justify-center p-8 text-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
                 <Package className="h-8 w-8 text-muted-foreground" />
@@ -179,6 +215,7 @@ export function QuickEgress({
               </p>
             </div>
           ) : (
+            /* ZONA C: El flujo del ticket activo con sus inputs y el botón plano */
             <>
               <ScrollArea className="flex-1 p-4">
                 <div className="space-y-3">
@@ -189,10 +226,10 @@ export function QuickEgress({
                     >
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-foreground truncate">
-                          {item.name}
+                          {item.nombre}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {formatCurrency(item.price)} c/u
+                          {formatCurrency(item.precio)} c/u
                         </p>
                       </div>
                       
@@ -202,6 +239,7 @@ export function QuickEgress({
                           size="icon"
                           className="h-8 w-8"
                           onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
+                          disabled={isProcessing}
                         >
                           <Minus className="h-3 w-3" />
                         </Button>
@@ -213,7 +251,7 @@ export function QuickEgress({
                           size="icon"
                           className="h-8 w-8"
                           onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-                          disabled={item.quantity >= item.stock}
+                          disabled={item.quantity >= item.stock_actual || isProcessing}
                         >
                           <Plus className="h-3 w-3" />
                         </Button>
@@ -224,6 +262,7 @@ export function QuickEgress({
                         size="icon"
                         className="h-8 w-8 text-muted-foreground hover:text-destructive"
                         onClick={() => onRemoveFromCart(item.id)}
+                        disabled={isProcessing}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -247,18 +286,41 @@ export function QuickEgress({
                   </div>
                 </div>
 
+                <div className="space-y-4 my-4 border-t border-b border-border py-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      Identificador o Destino del Ticket *
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="Ej: Pedido Farmacia Central / Cliente Particular"
+                      value={ticketTitulo}
+                      onChange={(e) => setTicketTitulo(e.target.value)}
+                      className="border-border"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      Observaciones (Opcional)
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="Ej: Retira motomandado / Aplicado descuento"
+                      value={ticketNota}
+                      onChange={(e) => setTicketNota(e.target.value)}
+                      className="border-border"
+                    />
+                  </div>
+                </div>
+
                 <Button
                   onClick={handleConfirm}
+                  disabled={isProcessing || cart.length === 0 || !ticketTitulo.trim()}
                   className="h-12 w-full gap-2 bg-emerald-600 text-base font-medium hover:bg-emerald-700"
                 >
-                  {showSuccess ? (
-                    <>
-                      <CheckCircle2 className="h-5 w-5" />
-                      ¡Venta Confirmada!
-                    </>
-                  ) : (
-                    'Confirmar Venta'
-                  )}
+                  {isProcessing ? 'Procesando...' : 'Confirmar Venta'}
                 </Button>
               </div>
             </>
