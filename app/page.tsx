@@ -1,15 +1,13 @@
 "use client"
 
 import { useState, useMemo, useEffect } from 'react'
-import { frequentProducts} from '@/lib/data' // Removemos initialProducts
 import { Sidebar } from '@/components/sidebar'
 import { Dashboard } from '@/components/dashboard'
 import { ProductCatalog } from '@/components/product-catalog'
 import { BulkUpload } from '@/components/bulk-upload'
 import { QuickEgress, type CartItem} from '@/components/quick-egress'
 import { createClient } from '@/utils/supabase/client'
-import { registrarMovimientoStock } from '@/app/actions/product'
-import { crearProducto, obtenerProductosFrecuentesAction } from '@/app/actions/product'
+import { registrarMovimientoStock, crearProducto, obtenerProductosFrecuentesAction } from '@/app/actions/product'
 
 // Definición estricta de la estructura real de Supabase
 export interface Producto {
@@ -20,6 +18,9 @@ export interface Producto {
   stock_actual: number
   stock_minimo: number
   activo: boolean
+  precio_compra: number
+  porcentaje_ganancia: number
+  precio_venta: number
 }
 
 export type ViewType = 'dashboard' | 'catalog' | 'upload' | 'egress'
@@ -33,6 +34,7 @@ export default function StockManagementApp() {
   const [frequentProducts, setFrequentProducts] = useState<Producto[]>([])
   const [cart, setCart] = useState<CartItem[]>([])
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [kpis, setKpis] = useState({ totalVentas: 0, totalCompras: 0, ganancia: 0 })
 
   // Sincronización directa y limpia con Supabase
   const cargarProductosReal = async () => {
@@ -56,10 +58,45 @@ export default function StockManagementApp() {
     setFrequentProducts(frecuentes)
   }
 
-  // 2. El useEffect ahora solo la invoca al montar el componente
+  const cargarMovimientosReal = async () => {
+    const supabase = createClient()
+    const { data, error } = await supabase
+      .from('movimientos')
+      .select('*')
+      .order('fecha', { ascending: false })
+
+    if (error) {
+      console.error('Error al traer movimientos:', error.message)
+      return
+    }
+    if (data) {
+      setMovements(data)
+    }
+  }
+
+  const cargarKpisReal = async () => {
+    const supabase = createClient()
+    const { data, error } = await supabase.rpc('obtener_kpis_dashboard')
+
+    if (error) {
+      console.error('Error al cargar KPIs del dashboard:', error.message)
+      return
+    }
+
+    if (data && data.length > 0) {
+      setKpis({
+        totalVentas: Number(data[0].total_ventas),
+        totalCompras: Number(data[0].total_compras),
+        ganancia: Number(data[0].ganancia)
+      })
+    }
+  }
+
+  // Carga inicial de datos
   useEffect(() => {
     cargarProductosReal()
     cargarMovimientosReal()
+    //cargarKpisReal()
   }, [])
 
   // KPIs calculados con las propiedades reales de la base de datos
@@ -70,10 +107,7 @@ export default function StockManagementApp() {
   const lowStockAlerts = useMemo(() => 
     products.filter(p => p.stock_actual < p.stock_minimo), [products]
   )
-  
-  const monthlyMovements = 384 // Simulado por ahora
 
-  // Operaciones de Stock locales (sincronizadas tras las mutaciones)
   const updateProductStock = (productId: string, newStock: number) => {
     setProducts(prev =>
       prev.map(p => (p.id === productId ? { ...p, stock_actual: newStock } : p))
@@ -89,7 +123,6 @@ export default function StockManagementApp() {
     )
   }
 
-  // Operaciones del Carrito adaptadas al nuevo esquema
   const addToCart = (product: Producto) => {
     setCart(prev => {
       const existing = prev.find(item => item.id === product.id)
@@ -100,7 +133,8 @@ export default function StockManagementApp() {
             : item
         )
       }
-      return [...prev, { ...product, quantity: 1, precio: 0 }] // precio placeholder para el formateador
+      // 🧠 CORRECCIÓN: Cambiamos 'precio: 0' para que tome 'precio: product.precio_venta'
+      return [...prev, { ...product, quantity: 1, precio: product.precio_venta }]
     })
   }
 
@@ -125,21 +159,35 @@ export default function StockManagementApp() {
     )
   }
 
-  // 1. Agregamos los dos parámetros obligatorios que manda la interfaz entre los paréntesis
+  const updateCartItemMargin = (productId: string, newMargin: number) => {
+    setCart(prev =>
+      prev.map(item => {
+        if (item.id === productId) {
+          // Recalculamos el precio de venta unitario usando el costo base y el nuevo margen
+          const nuevoPrecio = Number((item.precio_compra * (1 + newMargin / 100)).toFixed(2))
+          return { 
+            ...item, 
+            porcentaje_ganancia: newMargin, 
+            precio: nuevoPrecio 
+          }
+        }
+        return item
+      })
+    )
+  }
+
   const confirmEgress = async (tituloTicket: string, notaTicket: string): Promise<boolean> => {
     if (cart.length === 0) return false
 
     try {
-      // 💡 2. Creamos el ID único para que todos los productos de este carrito compartan el mismo tiquet
       const nuevoTicketId = crypto.randomUUID()
 
-      // Mandamos cada artículo del ticket a la base de datos
       for (const item of cart) {
         await registrarMovimientoStock({
           p_producto_id: item.id,
           p_cantidad: item.quantity,
           p_tipo: 'SALIDA',
-          p_descripcion: `${item.nombre} (${item.presentacion})`, // Nombre del item para el desglose interno
+          p_descripcion: `${item.nombre} (${item.presentacion})`,
           p_ticket_id: nuevoTicketId, 
           p_ticket_titulo: `Venta: ${tituloTicket.trim()}`,
           p_ticket_nota: notaTicket.trim() !== '' ? notaTicket.trim() : null, 
@@ -148,6 +196,7 @@ export default function StockManagementApp() {
 
       await cargarProductosReal()
       await cargarMovimientosReal()
+      //await cargarKpisReal()
 
       const frecuentes = await obtenerProductosFrecuentesAction()
       setFrequentProducts(frecuentes)
@@ -159,24 +208,6 @@ export default function StockManagementApp() {
       return false
     }
   }
-
-  const cargarMovimientosReal = async () => {
-    const supabase = createClient()
-    const { data, error } = await supabase
-      .from('movimientos')
-      .select('*')
-      .order('fecha', { ascending: false }) // Ordenamos por tu columna 'fecha' para ver lo más nuevo arriba
-      .limit(10) // Traemos solo los últimos 10 para no sobrecargar el inicio
-
-    if (error) {
-      console.error('Error al traer movimientos:', error.message)
-      return
-    }
-    if (data) {
-      setMovements(data)
-    }
-  }
-
 
   return (
     <div className="flex h-screen bg-background">
@@ -205,8 +236,8 @@ export default function StockManagementApp() {
             <ProductCatalog
               products={products}
               onRefresh={async () => {
-                await cargarProductosReal()   // Recarga la lista de productos
-                await cargarMovimientosReal() // Recarga el historial del Dashboard al toque
+                await cargarProductosReal()
+                await cargarMovimientosReal()
               }}
             />
           )}
@@ -219,16 +250,17 @@ export default function StockManagementApp() {
           )}
           
           {currentView === 'egress' && (
-          <QuickEgress
-            products={products}
-            frequentProducts={frequentProducts}
-            cart={cart}
-            onAddToCart={addToCart}
-            onRemoveFromCart={removeFromCart}
-            onUpdateQuantity={updateCartQuantity}
-            onConfirmEgress={confirmEgress}
-          />
-        )}
+            <QuickEgress
+              products={products}
+              frequentProducts={frequentProducts}
+              cart={cart}
+              onAddToCart={addToCart}
+              onRemoveFromCart={removeFromCart}
+              onUpdateQuantity={updateCartQuantity}
+              onConfirmEgress={confirmEgress}
+              onUpdateMargin={updateCartItemMargin} 
+            />
+          )}
         </div>
       </main>
     </div>

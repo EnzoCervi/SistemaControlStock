@@ -1,23 +1,21 @@
 "use client"
 
 import { useState, useMemo } from 'react'
-import { Search, Plus, Minus, Trash2, CheckCircle2, Package } from 'lucide-react'
+import { Search, Plus, Minus, Trash2, Package } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 import { formatCurrency } from '@/lib/data'
 
-// 💡 Importamos el molde oficial de la aplicación
+// Importamos el molde oficial de la aplicación
 import { type Producto } from '@/app/page'
 
-// Definimos la estructura limpia del carrito basada en nuestro Producto
 export interface CartItem extends Producto {
   quantity: number
-  precio: number // Placeholder numérico para no romper el formateador de moneda
+  precio: number 
 }
 
 interface QuickEgressProps {
@@ -28,6 +26,7 @@ interface QuickEgressProps {
   onRemoveFromCart: (productId: string) => void
   onUpdateQuantity: (productId: string, quantity: number) => void
   onConfirmEgress: (tituloTicket: string, notaTicket: string) => Promise<boolean> 
+  onUpdateMargin: (productId: string, newMargin: number) => void
 }
 
 export function QuickEgress({
@@ -38,12 +37,16 @@ export function QuickEgress({
   onRemoveFromCart,
   onUpdateQuantity,
   onConfirmEgress,
+  onUpdateMargin,
 }: QuickEgressProps) {
   const [search, setSearch] = useState('')
   const [showSuccess, setShowSuccess] = useState(false)
-  const [isProcessing, setIsProcessing] = useState(false) // Estado de carga para el botón
+  const [isProcessing, setIsProcessing] = useState(false) 
+  
   const [ticketTitulo, setTicketTitulo] = useState('')
   const [ticketNota, setTicketNota] = useState('')
+  const [editingMarginId, setEditingMarginId] = useState<string | null>(null)
+  const [tempMargin, setTempMargin] = useState<number>(0)
 
   // Buscador 
   const filteredProducts = useMemo(() => {
@@ -63,22 +66,19 @@ export function QuickEgress({
     [cart]
   )
 
-  // Manejador asíncrono para la confirmación de la salida
   const handleConfirm = async () => {
-    // Candado de seguridad básico: si no hay título, no hace nada
     if (!ticketTitulo.trim()) return
 
     setIsProcessing(true)
-    
-    // 💡 PASAMOS LOS DOS PARÁMETROS REALES (Esto borra tu línea roja)
     const success = await onConfirmEgress(ticketTitulo, ticketNota)
+    setIsProcessing(true) // Mantiene el estado visual seguro
     
     setIsProcessing(false)
     
     if (success) {
       setShowSuccess(true)
-      setTicketTitulo('') // Limpiamos el título para la próxima venta
-      setTicketNota('')   // Limpiamos la nota para la próxima venta
+      setTicketTitulo('') 
+      setTicketNota('')   
       setTimeout(() => setShowSuccess(false), 2000)
     }
   }
@@ -89,9 +89,9 @@ export function QuickEgress({
   }
 
   return (
-    <div className="flex h-[calc(100vh-7rem)] flex-col gap-6 lg:flex-row">
+    <div className="flex h-[calc(100vh-3.5rem)] flex-col gap-6 lg:flex-row overflow-hidden">
       {/* Panel Izquierdo - Buscador y Frecuentes */}
-      <div className="flex flex-1 flex-col space-y-6">
+      <div className="flex flex-1 flex-col space-y-6 overflow-y-auto pr-1">
         <div>
           <h1 className="text-2xl font-semibold text-foreground">Venta Rápida</h1>
           <p className="text-sm text-muted-foreground">
@@ -100,7 +100,7 @@ export function QuickEgress({
         </div>
 
         {/* Barra de Búsqueda */}
-        <Card className="border-border">
+        <Card className="border-border flex-shrink-0">
           <CardContent className="p-4">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
@@ -114,7 +114,7 @@ export function QuickEgress({
             
             {/* Dropdown de Resultados */}
             {filteredProducts.length > 0 && (
-              <div className="mt-2 rounded-lg border border-border bg-card shadow-lg">
+              <div className="mt-2 rounded-lg border border-border bg-card shadow-lg max-h-60 overflow-y-auto">
                 {filteredProducts.map((product) => (
                   <button
                     key={product.id}
@@ -134,7 +134,7 @@ export function QuickEgress({
         </Card>
 
         {/* Productos Frecuentes */}
-        <Card className="flex-1 border-border">
+        <Card className="flex-1 border-border min-h-[250px]">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-medium">Productos Frecuentes</CardTitle>
           </CardHeader>
@@ -175,20 +175,20 @@ export function QuickEgress({
         </Card>
       </div>
 
-      {/* Panel Derecho - Ticket de Venta / Carrito */}
-      <Card className="w-full border-border lg:w-96">
-        <CardHeader className="border-b border-border pb-4">
+      
+      <Card className="w-full border-border lg:w-96 flex flex-col h-full overflow-hidden bg-card shadow-sm">
+        <CardHeader className="border-b border-border pb-4 flex-shrink-0">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base font-medium">Ticket de Venta</CardTitle>
+            
+            <CardTitle className="text-lg font-semibold text-foreground">Ticket de Venta</CardTitle>
             {cart.length > 0 && (
               <Badge variant="secondary">{cartItemCount} items</Badge>
             )}
           </div>
         </CardHeader>
         
-        <div className="flex flex-1 flex-col justify-center">
+        <div className="flex flex-1 flex-col overflow-hidden pt-0">
           {showSuccess ? (
-            /* ZONA A: Si la venta fue exitosa, se adueña del panel para mostrar la animación centrada */
             <div className="flex flex-1 flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in-95 duration-150">
               <embed 
                 type="image/svg+xml"
@@ -202,7 +202,6 @@ export function QuickEgress({
               </p>
             </div>
           ) : cart.length === 0 ? (
-            /* ZONA B: Estado de espera estándar cuando no hay productos */
             <div className="flex flex-1 flex-col items-center justify-center p-8 text-center">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
                 <Package className="h-8 w-8 text-muted-foreground" />
@@ -215,78 +214,117 @@ export function QuickEgress({
               </p>
             </div>
           ) : (
-            /* ZONA C: El flujo del ticket activo con sus inputs y el botón plano */
             <>
-              <ScrollArea className="flex-1 p-4">
-                <div className="space-y-3">
-                  {cart.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center gap-3 rounded-lg border border-border bg-muted/30 p-3"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground truncate">
-                          {item.nombre}
-                        </p>
+              {/* 🔄 LISTA CON SCROLL INDEPENDIENTE SEGURO (Ocupa solo el espacio disponible del medio) */}
+              <div className="flex-1 overflow-y-auto px-4 pt-4 pb-3 space-y-3 border-b border-dashed border-border/60 mt-0">
+                {cart.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center gap-3 rounded-lg border border-border bg-muted/30 p-3"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">{item.nombre}</p>
+                      
+                      <div className="mt-0.5 space-y-1">
+                        {/* Precio Unitario */}
                         <p className="text-xs text-muted-foreground">
-                          {formatCurrency(item.precio)} c/u
+                          ${Number(item.precio).toLocaleString('es-AR', { minimumFractionDigits: 2 })} c/u
                         </p>
+
+                        {/* LÓGICA DE MODIFICACIÓN DE MARGEN INLINE */}
+                        {editingMarginId === item.id ? (
+                          <div className="flex items-center gap-1.5 mt-1 animate-in fade-in duration-200">
+                            <div className="relative flex items-center max-w-[80px]">
+                              <Input
+                                type="number"
+                                min="0"
+                                value={tempMargin}
+                                onChange={(e) => setTempMargin(Number(e.target.value) || 0)}
+                                className="h-6 pr-5 text-xs font-semibold border-primary/40 focus-visible:ring-primary"
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    onUpdateMargin(item.id, tempMargin)
+                                    setEditingMarginId(null)
+                                  }
+                                }}
+                              />
+                              <span className="absolute right-1.5 text-[10px] font-bold text-muted-foreground">%</span>
+                            </div>
+                            <button
+                              onClick={() => {
+                                onUpdateMargin(item.id, tempMargin)
+                                setEditingMarginId(null)
+                              }}
+                              className="text-[11px] font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200"
+                            >
+                              Listo
+                            </button>
+                            <button
+                              onClick={() => setEditingMarginId(null)}
+                              className="text-[11px] text-muted-foreground hover:text-foreground px-1"
+                            >
+                              X
+                            </button>
+                          </div>
+                        ) : (
+                          <p className="text-[11px] text-muted-foreground">
+                            {/* 🧠 CORRECCIÓN: Restablecido el texto base del margen que se había perdido */}
+                            {' '}
+                            <span
+                              onClick={() => {
+                                setEditingMarginId(item.id)
+                                setTempMargin(item.porcentaje_ganancia)
+                              }}
+                              className="text-primary underline cursor-pointer font-medium hover:text-primary/80 transition-colors"
+                            >
+                              Modificar margen
+                            </span>
+                          </p>
+                        )}
                       </div>
-                      
-                      <div className="flex items-center gap-1">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
-                          disabled={isProcessing}
-                        >
-                          <Minus className="h-3 w-3" />
-                        </Button>
-                        <span className="w-8 text-center text-sm font-medium">
-                          {item.quantity}
-                        </span>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-                          disabled={item.quantity >= item.stock_actual || isProcessing}
-                        >
-                          <Plus className="h-3 w-3" />
-                        </Button>
-                      </div>
-                      
+                    </div>
+                    
+                    <div className="flex items-center gap-1 flex-shrink-0">
                       <Button
-                        variant="ghost"
+                        variant="outline"
                         size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                        onClick={() => onRemoveFromCart(item.id)}
+                        className="h-8 w-8"
+                        onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
                         disabled={isProcessing}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Minus className="h-3 w-3" />
+                      </Button>
+                      <span className="w-8 text-center text-sm font-medium">
+                        {item.quantity}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                        disabled={item.quantity >= item.stock_actual || isProcessing}
+                      >
+                        <Plus className="h-3 w-3" />
                       </Button>
                     </div>
-                  ))}
-                </div>
-              </ScrollArea>
-
-              <div className="border-t border-border p-4">
-                <div className="mb-4 space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">Subtotal</span>
-                    <span className="font-medium">{formatCurrency(cartTotal)}</span>
+                    
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive flex-shrink-0"
+                      onClick={() => onRemoveFromCart(item.id)}
+                      disabled={isProcessing}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
-                  <Separator />
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-foreground">Total</span>
-                    <span className="text-lg font-bold text-foreground">
-                      {formatCurrency(cartTotal)}
-                    </span>
-                  </div>
-                </div>
+                ))}
+              </div>
 
-                <div className="space-y-4 my-4 border-t border-b border-border py-4">
+              
+              <div className="border-t border-border p-4 bg-card flex-shrink-0 space-y-4">
+
+                <div className="space-y-3 pt-2">
                   <div className="space-y-1.5">
                     <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                       Identificador o Destino del Ticket *
@@ -296,7 +334,7 @@ export function QuickEgress({
                       placeholder="Ej: Pedido Farmacia Central / Cliente Particular"
                       value={ticketTitulo}
                       onChange={(e) => setTicketTitulo(e.target.value)}
-                      className="border-border"
+                      className="border-border h-10"
                       required
                     />
                   </div>
@@ -310,15 +348,22 @@ export function QuickEgress({
                       placeholder="Ej: Retira motomandado / Aplicado descuento"
                       value={ticketNota}
                       onChange={(e) => setTicketNota(e.target.value)}
-                      className="border-border"
+                      className="border-border h-10"
                     />
                   </div>
+                </div>
+
+                <div className="flex items-center justify-between py-1">
+                  <span className="text-base font-semibold text-foreground">Total</span>
+                  <span className="text-xl font-bold text-foreground">
+                    {formatCurrency(cartTotal)}
+                  </span>
                 </div>
 
                 <Button
                   onClick={handleConfirm}
                   disabled={isProcessing || cart.length === 0 || !ticketTitulo.trim()}
-                  className="h-12 w-full gap-2 bg-emerald-600 text-base font-medium hover:bg-emerald-700"
+                  className="h-12 w-full gap-2 bg-emerald-600 text-base font-medium hover:bg-emerald-700 mt-2"
                 >
                   {isProcessing ? 'Procesando...' : 'Confirmar Venta'}
                 </Button>

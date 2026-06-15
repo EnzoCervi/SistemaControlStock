@@ -4,61 +4,56 @@ import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { Producto } from '../page'
 
-// 1. Añadir Producto
-// 1. Añadir Producto con Auditoría Dinámica de Entrada
-// 1. Añadir Producto con Auditoría Obligatoria de Tiquet
-export async function crearProducto(formData: {
-  nombre: string
-  presentacion: string
-  categoria: string
-  stock_actual: number
-  stock_minimo: number
-}) {
+// 1. Añadir Producto (Corrección de duplicación de Stock Inicial)
+export async function crearProducto(producto: Omit<Producto, 'id' | 'activo' | 'precio_venta'>) {
   const supabase = await createClient()
-  
-  // A. Insertamos el producto y recuperamos el objeto creado con su ID real de la nube
-  const { data: nuevoProducto, error: errorProducto } = await supabase
+
+  // Calcula el precio de venta final aplicando el margen de ganancia entero
+  const precio_venta = Number((producto.precio_compra * (1 + producto.porcentaje_ganancia / 100)).toFixed(2))
+
+  // 💡 SOLUCIÓN: Insertamos el producto con stock_actual en 0. 
+  // Dejamos que el RPC se encargue de sumarle el stock real en el siguiente paso.
+  const { data: nuevoProducto, error: prodError } = await supabase
     .from('productos')
-    .insert([
-      {
-        nombre: formData.nombre,
-        presentacion: formData.presentacion,
-        categoria: formData.categoria,
-        stock_actual: formData.stock_actual,
-        stock_minimo: formData.stock_minimo,
-        activo: true
-      }
-    ])
+    .insert([{
+      nombre: producto.nombre,
+      presentacion: producto.presentacion,
+      categoria: producto.categoria,
+      stock_actual: 0, 
+      stock_minimo: producto.stock_minimo,
+      precio_compra: producto.precio_compra,
+      porcentaje_ganancia: producto.porcentaje_ganancia,
+      precio_venta: precio_venta,
+      activo: true
+    }])
     .select()
     .single()
 
-  if (errorProducto) throw new Error(errorProducto.message)
+  if (prodError) {
+    throw new Error(prodError.message)
+  }
 
-  // B. Si el producto se creó bien y tiene stock inicial, registramos el tiquet obligatorio
-  if (nuevoProducto && formData.stock_actual > 0) {
-    // 🆔 Generamos el ID único del tiquet para esta carga inicial en el servidor
-    const ticketIdAlta = crypto.randomUUID()
+  // Si el usuario ingresó un stock inicial en el formulario, procesamos la entrada por el RPC
+  if (producto.stock_actual > 0) {
+    const ticketId = crypto.randomUUID()
+    
+    const { error: movError } = await supabase.rpc('registrar_movimiento', {
+      p_producto_id: nuevoProducto.id,
+      p_cantidad: producto.stock_actual, // Pasamos la cantidad real que viene del formulario
+      p_tipo: 'ENTRADA',
+      p_descripcion: nuevoProducto.presentacion || 'Sin presentación', // Viaja la presentación para el subtítulo gris
+      p_ticket_id: ticketId,
+      p_ticket_titulo: `Carga manual: ${nuevoProducto.nombre}`,
+      p_ticket_nota: null
+    })
 
-    const { error: errorMovimiento } = await supabase
-      .from('movimientos')
-      .insert([
-        {
-          producto_id: nuevoProducto.id, // Enlazamos al ID real del producto
-          cantidad: formData.stock_actual,
-          tipo: 'ENTRADA',
-          descripcion: 'Apertura de inventario', 
-          ticket_id: ticketIdAlta,                          
-          ticket_titulo: `Carga manual: ${formData.nombre}`, 
-          ticket_nota: null                                 
-        }
-      ])
-
-    if (errorMovimiento) {
-      console.error('Error al registrar movimiento inicial:', errorMovimiento.message)
+    if (movError) {
+      console.error('Error al registrar movimiento inicial por RPC:', movError.message)
     }
   }
 
   revalidatePath('/')
+  return nuevoProducto as Producto
 }
 
 // 2. Editar Producto
@@ -69,6 +64,8 @@ export async function editarProducto(
     presentacion: string
     categoria: string
     stock_minimo: number
+    precio_compra: number        
+    porcentaje_ganancia: number  
   }
 ) {
   const supabase = await createClient()
@@ -99,6 +96,7 @@ export async function bajaLogicaProducto(id: string) {
   if (error) throw new Error(error.message)
   revalidatePath('/')
 }
+
 interface MovimientoParams {
   p_producto_id: string
   p_cantidad: number
@@ -120,7 +118,6 @@ export async function registrarMovimientoStock({
 }: MovimientoParams) {
   const supabase = await createClient()
 
-  // 💡 El lado izquierdo (la clave) debe mapear EXACTO como se llama en el SQL de Supabase
   const { data, error } = await supabase.rpc('registrar_movimiento', {
     p_producto_id, 
     p_cantidad,
