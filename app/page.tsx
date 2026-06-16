@@ -8,8 +8,9 @@ import { BulkUpload } from '@/components/bulk-upload'
 import { QuickEgress, type CartItem} from '@/components/quick-egress'
 import { createClient } from '@/utils/supabase/client'
 import { registrarMovimientoStock, crearProducto, obtenerProductosFrecuentesAction } from '@/app/actions/product'
+import { MovementsHistory } from '@/components/movements-history'
+import { anularPedidoAction } from '@/app/actions/product'
 
-// Definición estricta de la estructura real de Supabase
 export interface Producto {
   id: string
   nombre: string
@@ -23,12 +24,11 @@ export interface Producto {
   precio_venta: number
 }
 
-export type ViewType = 'dashboard' | 'catalog' | 'upload' | 'egress'
+export type ViewType = 'dashboard' | 'catalog' | 'upload' | 'egress' | 'history'
 
 export default function StockManagementApp() {
   const [currentView, setCurrentView] = useState<ViewType>('dashboard')
   
-  // Inicializamos el estado vacío
   const [products, setProducts] = useState<Producto[]>([])
   const [movements, setMovements] = useState<any[]>([])
   const [frequentProducts, setFrequentProducts] = useState<Producto[]>([])
@@ -36,7 +36,6 @@ export default function StockManagementApp() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [kpis, setKpis] = useState({ totalVentas: 0, totalCompras: 0, ganancia: 0 })
 
-  // Sincronización directa y limpia con Supabase
   const cargarProductosReal = async () => {
     const supabase = createClient()
     
@@ -63,7 +62,7 @@ export default function StockManagementApp() {
     const { data, error } = await supabase
       .from('movimientos')
       .select('*')
-      .order('fecha', { ascending: false })
+         .order('fecha', { ascending: false })
 
     if (error) {
       console.error('Error al traer movimientos:', error.message)
@@ -74,32 +73,26 @@ export default function StockManagementApp() {
     }
   }
 
-  const cargarKpisReal = async () => {
-    const supabase = createClient()
-    const { data, error } = await supabase.rpc('obtener_kpis_dashboard')
-
-    if (error) {
-      console.error('Error al cargar KPIs del dashboard:', error.message)
-      return
-    }
-
-    if (data && data.length > 0) {
-      setKpis({
-        totalVentas: Number(data[0].total_ventas),
-        totalCompras: Number(data[0].total_compras),
-        ganancia: Number(data[0].ganancia)
-      })
+  // 🚀 FUNCIÓN INTERMEDIARIA CRUCIAL PARA LA ANULACIÓN OPERATIVA
+  const handleAnularTicketReal = async (ticketId: string) => {
+    try {
+      // 1. Ejecutamos la lógica en el backend (Supabase)
+      await anularPedidoAction(ticketId)
+      
+      // 2. Forzamos la actualización inmediata de los estados locales del cliente
+      await cargarProductosReal()
+      await cargarMovimientosReal()
+    } catch (error) {
+      console.error('Error al procesar la anulación en la interfaz:', error)
+      throw error // Lanza el error para que lo capture el 'alert' del botón
     }
   }
 
-  // Carga inicial de datos
   useEffect(() => {
     cargarProductosReal()
     cargarMovimientosReal()
-    //cargarKpisReal()
   }, [])
 
-  // KPIs calculados con las propiedades reales de la base de datos
   const totalStock = useMemo(() => 
     products.reduce((acc, p) => acc + p.stock_actual, 0), [products]
   )
@@ -133,7 +126,6 @@ export default function StockManagementApp() {
             : item
         )
       }
-      // 🧠 CORRECCIÓN: Cambiamos 'precio: 0' para que tome 'precio: product.precio_venta'
       return [...prev, { ...product, quantity: 1, precio: product.precio_venta }]
     })
   }
@@ -163,7 +155,6 @@ export default function StockManagementApp() {
     setCart(prev =>
       prev.map(item => {
         if (item.id === productId) {
-          // Recalculamos el precio de venta unitario usando el costo base y el nuevo margen
           const nuevoPrecio = Number((item.precio_compra * (1 + newMargin / 100)).toFixed(2))
           return { 
             ...item, 
@@ -196,7 +187,6 @@ export default function StockManagementApp() {
 
       await cargarProductosReal()
       await cargarMovimientosReal()
-      //await cargarKpisReal()
 
       const frecuentes = await obtenerProductosFrecuentesAction()
       setFrequentProducts(frecuentes)
@@ -239,6 +229,15 @@ export default function StockManagementApp() {
                 await cargarProductosReal()
                 await cargarMovimientosReal()
               }}
+            />
+          )}
+
+          {currentView === 'history' && (
+            <MovementsHistory 
+              movements={movements} 
+              products={products} 
+              // 🎯 ENLAZADO: Ahora consume el puente interactivo local con refresco automático
+              onAnularTicket={handleAnularTicketReal}
             />
           )}
           

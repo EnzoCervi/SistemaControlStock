@@ -3,6 +3,7 @@
 import { 
   LayoutDashboard, 
   Package, 
+  History, // 🎯 Ícono importado para el nuevo módulo de auditoría
   Upload, 
   ShoppingCart,
   ChevronLeft,
@@ -17,6 +18,7 @@ import type { ViewType } from '@/app/page'
 const navigationItems = [
   { id: 'dashboard' as const, label: 'Página principal', icon: LayoutDashboard },
   { id: 'catalog' as const, label: 'Catálogo', icon: Package },
+  { id: 'history' as const, label: 'Historial', icon: History }, // 🎯 Enlace al nuevo módulo intercalado lógicamente
   { id: 'upload' as const, label: 'Carga Masiva', icon: Upload },
   { id: 'egress' as const, label: 'Venta Rápida', icon: ShoppingCart },
 ]
@@ -76,6 +78,7 @@ export function Sidebar({
                   : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               )}
             >
+              {/* 🎯 MICRO-DETALLE 2: Línea coral reactiva en el borde izquierdo */}
               {isActive && (
                 <span className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-lg bg-accent" />
               )}
